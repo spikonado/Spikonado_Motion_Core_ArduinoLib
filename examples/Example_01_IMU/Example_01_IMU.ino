@@ -1,24 +1,34 @@
-#include "Spikonado_ESP32-S3_6_Motor_Driver_IMU_Library.h"
+#include "Spikonado_Motion_Core.h"
 
-MotorDriverIMU myMDI;
+MotionCore myMotionCore;
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
-  while(!Serial); // Blocks the program until connected to another device through Serial.
 
-  if (!myMDI.begin()) {
+  if (!myMotionCore.begin())
+  {
     Serial.println("An error has occured.");
   }
-  else {
+  else
+  {
     Serial.println("Successfully started!");
+    Serial.println(
+      "Output in the form accelerometer(x, y, z), gyroscope(x, y, z), magnetometer(x, y, z).");
+    Serial.println("The units are m/s^2, rad/s, µT");
   }
 }
 
-void loop() {
-  if (!myMDI.read()) {
+void loop()
+{
+  delay(10);  // Time for user to read info
+
+  if (!myMotionCore.readIMU())
+  {
     Serial.println("An error has occured.");
   }
-  Serial.println("Output in the form accelerometer(x, y, z), gyroscope(x, y, z), magnetometer(x, y, z).");
-  Serial.println("The units are m/s^2, rad/s, µT");
-  myMDI.print();
+  else
+  {
+    myMotionCore.printIMU();
+  }
 }

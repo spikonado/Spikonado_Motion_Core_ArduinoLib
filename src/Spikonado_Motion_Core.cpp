@@ -1,35 +1,46 @@
-#include "Spikonado_ESP32-S3_6_Motor_Driver_IMU_Library.h"
+#include "Spikonado_Motion_Core.h"
 
-bool MotorDriverIMU::begin(uint16_t imuTimeBwReports) {
+bool MotionCore::begin(uint16_t imuTimeBwReports)
+{
   imuTimeBwReports_ = imuTimeBwReports;
   Wire.begin();
-  if (!(imu_.begin(0x4B, Wire, 18, 17) && imu_.enableAccelerometer(imuTimeBwReports_) && imu_.enableGyro(imuTimeBwReports_) && imu_.enableMagnetometer(imuTimeBwReports_))) {
+  if (!(imu_.begin(0x4B, Wire, 18, 17) && imu_.enableAccelerometer(imuTimeBwReports_) &&
+        imu_.enableGyro(imuTimeBwReports_) && imu_.enableMagnetometer(imuTimeBwReports_)))
+  {
     return false;
   }
 
   return true;
 }
 
-bool MotorDriverIMU::readIMU() {
-  if (imu_.wasReset()) {
-    if (!(imu_.enableAccelerometer(imuTimeBwReports_) && imu_.enableGyro(imuTimeBwReports_) && imu_.enableMagnetometer(imuTimeBwReports_))) {
+bool MotionCore::readIMU()
+{
+  if (imu_.wasReset())
+  {
+    if (!(imu_.enableAccelerometer(imuTimeBwReports_) && imu_.enableGyro(imuTimeBwReports_) &&
+          imu_.enableMagnetometer(imuTimeBwReports_)))
+    {
       return false;
     }
   }
-  if (imu_.getSensorEvent() == true) {
-    if (imu_.getSensorEventID() == SENSOR_REPORTID_ACCELEROMETER) {
+  if (imu_.getSensorEvent() == true)
+  {
+    if (imu_.getSensorEventID() == SENSOR_REPORTID_ACCELEROMETER)
+    {
       accelX_ = imu_.getAccelX();
       accelY_ = imu_.getAccelY();
       accelZ_ = imu_.getAccelZ();
       accelAccuracy_ = imu_.getAccelAccuracy();
     }
-    else if (imu_.getSensorEventID() == SENSOR_REPORTID_GYROSCOPE_CALIBRATED) {
+    else if (imu_.getSensorEventID() == SENSOR_REPORTID_GYROSCOPE_CALIBRATED)
+    {
       gyroX_ = imu_.getGyroX();
       gyroY_ = imu_.getGyroY();
       gyroZ_ = imu_.getGyroZ();
       gyroAccuracy_ = imu_.getGyroAccuracy();
     }
-    else if (imu_.getSensorEventID() == SENSOR_REPORTID_MAGNETIC_FIELD) {
+    else if (imu_.getSensorEventID() == SENSOR_REPORTID_MAGNETIC_FIELD)
+    {
       magX_ = imu_.getMagX();
       magY_ = imu_.getMagY();
       magZ_ = imu_.getMagZ();
@@ -39,7 +50,8 @@ bool MotorDriverIMU::readIMU() {
   return true;
 }
 
-void MotorDriverIMU::printIMU() {
+void MotionCore::printIMU()
+{
   Serial.print(accelX_, 2);
   Serial.print(" ");
   Serial.print(accelY_, 2);
